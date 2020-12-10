@@ -86,3 +86,9 @@ $ git reset --hard
 # Remove all untracked files
 $ git clean -fd
 ```
+
+## Submodule
+If you need to put a git repo inside another git repo, treat the inside repo as a git submodule.
+```bash
+$ git submodule add [OPTIONS] <repo> <path>
+```

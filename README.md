@@ -34,3 +34,14 @@ $ hexo s
 # deploy to git page
 $ hexo clean && hexo g -d
 ```
+
+# Themes
+Find hexo themes <a href=https://hexo.io/themes/>here</a>
+```bash
+# Install the theme
+$ git submodule add <repo> themes/<theme-name>
+```
+Modify theme in `_config.yml`
+```yml
+theme: landscape
+```
