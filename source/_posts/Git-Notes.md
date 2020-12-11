@@ -28,6 +28,12 @@ $ git merge -X ours dev
 $ git merge -X theirs dev
 ```
 
+## Commit
+```bash
+# Modify the last commit message
+$ git commit --amend
+```
+
 ## Rebase
 ```bash
 # Merge the most recent 2 commits
