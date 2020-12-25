@@ -1,9 +1,3 @@
----
-title: Git Notes
-date: 2020-12-09
-tags:
----
-
 # My Blog
 Powered by hexo
 
