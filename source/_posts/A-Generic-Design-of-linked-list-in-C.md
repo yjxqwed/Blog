@@ -50,7 +50,8 @@ typedef struct NodeB {
 
 This design defines a linkable type `list_node_t` and a list type `list_t`, and put one or more members of `list_node_t` type in the actual data structure that needs to be linked. We only need to implement functions for `list_t` and `list_node_t`, then we are done.
 
-A possible implementation of `list_push_back` could be like this:
+A possible implementation of `list_push_back` and `list_pop_back` could be like this:
+
 ```c
 void list_push_back(list_t *l, list_node_t *node) {
     list_node_t *last = l->tail.prev;
@@ -59,9 +60,19 @@ void list_push_back(list_t *l, list_node_t *node) {
     node->next = &(l->tail);
     l->tail.prev = node;
 }
+
+list_node_t *list_pop_back(list_t *l) {
+    if (back == &(l->head)) {
+        return NULL;
+    }
+    back->prev->next = &(l->tail);
+    l->tail.prev = back->prev;
+    back->next = back->prev = NULL;
+    return back;
+}
 ```
 
-To use `list_push_back` for `nodeb_t`, we will use some macros:
+To use `list_push_back` and `list_pop_back` for `nodeb_t`, we will use some macros:
 ```c
 // uintptr_t is a type for address.
 
@@ -73,17 +84,26 @@ To use `list_push_back` for `nodeb_t`, we will use some macros:
         (uintptr_t)node_ptr - __member_offset(struct_type, member) \
     )
 ```
-`__member_offset` is a macro calculates the offset of `member` in `struct_type`. For example, the offset of `tag_in_list_a` in `nodeb_t` is `0` and that of `tag_in_list_b` is `sizeof(list_node_t)`.
+`__member_offset` is a macro that calculates the offset of `member` in `struct_type`. For example, the offset of `tag_in_list_a` in `nodeb_t` is `0` and that of `tag_in_list_b` is `sizeof(list_node_t)`.
 
 `__container_of` is to find the pointer to `struct_type` by a pointer `node_ptr` to `member`.
 
-With this two macros, we can define the follow macro:
+With these two macros, we can define the following macros used for specific data types:
 
 ```c
 #define __list_push_back(list, container_ptr, member) { \
     list_node_t *p = &(container_ptr->member); \
     list_push_back(list, p); \
 }
+
+#define __list_pop_back(list, struct_type, member) ({ \
+    struct_type *back = NULL; \
+    list_node_t *p = list_pop_back(list); \
+    if (p != NULL) { \
+        back = __container_of(struct_type, member, p); \
+    } \
+    back; \
+})
 ```
 Sample usage:
 ```c
@@ -93,12 +113,16 @@ list_t *list_b;
 nodeb_t *nb;
 
 // push nb into list_a
-__list_push_back(list_a, nb, tag_in_list_b);
+__list_push_back(list_a, nb, tag_in_list_a);
 // push nb into list_b
-__list_push_back(list_a, nb, tag_in_list_b);
+__list_push_back(list_b, nb, tag_in_list_b);
+
+// n will be nb
+nodeb_t *n = __list_pop_back(list_a, nodeb_t, tag_in_list_a);
 ```
 
 ---
 As we can see, this generic design is easy to use and solve the problem for push one node into different lists simultaneously.
 
+This design is from the `Linux` kernel.
 </div>
