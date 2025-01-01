@@ -11,11 +11,11 @@ This post is to archive some commonly used docker commands.
 Build an image.
 ```bash
 # build
-$ docker build [OPTIONS] PATH
+$> docker build [OPTIONS] PATH
 
 # examples
-$ docker build -t test:0.1 .
-$ docker build -t test:0.1 -f ./Dockerfile1 .
+$> docker build -t test:0.1 .
+$> docker build -t test:0.1 -f ./Dockerfile1 .
 ```
 
 ### Dockerfile
@@ -40,44 +40,49 @@ RUN <cmd> [&& <cmd>]
 ## Run
 Run an image
 ```bash
-$ docker run -dit --net=host --restart=always --privileged \
+$> docker run -dit --net=host --restart=always --privileged \
     --name=<container_name> \
-    -v <host_path>:<container_path>
+    -v <host_path>:<container_path> \
+    -p <host_port>:<container_port> \
+    <image>
 ```
-`--net=host` Automatically map all ports.  
-`--restart=always` Restart the container when docker restarts.  
-`-v <host_path>:<container_path>` Bind mount a volume. You can bind your code dir to a container and build your code inside a container!
+* `--net=host` Automatically map all ports.
+* `-p <host_port>:<container_port>` Bind host port to guest port.
+    * Sometimes `--net=host` doesn't work on my Mac...
+* `--restart=always` Restart the container when docker restarts.
+* `-v <host_path>:<container_path>` Bind mount a volume.
+    * You can bind your code dir to a container and build your code inside a container!
 
 ## Exec
 Execuate some command upon a container, usualy a shell.
 ```bash
-$ docker exec -it <container> bash
+$> docker exec -it <container> bash
 ```
 
 ## Miscellaneous
 ```bash
 # stop a container
-$ docker stop <container>
+$> docker stop <container>
 
 # restart a container
-$ docker restart <container>
+$> docker restart <container>
 
 # list running containers
-$ docker ps
+$> docker ps
 
 # list containers
-$ docker container ls
+$> docker container ls
 
 # list local images
-$ docker image ls
-$ docker images
+$> docker image ls
+$> docker images
 
 # remove a container
-$ docker container rm <container>
+$> docker container rm <container>
 
 # remove an image
-$ docker image rm <image>
+$> docker image rm <image>
 
 # get info of a container
-$ docker inspect <container>
+$> docker inspect <container>
 ```
